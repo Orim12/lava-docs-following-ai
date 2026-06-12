@@ -6,6 +6,9 @@ on:
       - "**/*.json"
   pull_request:
 
+permissions:
+  contents: write
+
 jobs:
   format-json:
     runs-on: ubuntu-latest
@@ -21,9 +24,7 @@ jobs:
 
       - name: Prettify JSON files
         run: |
-          echo "Formatting JSON files..."
           find . -type f -name "*.json" | while read file; do
-            echo "Processing $file"
             jq . "$file" > "$file.tmp" && mv "$file.tmp" "$file"
           done
 
