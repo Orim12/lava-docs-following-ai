@@ -1,0 +1,21 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+# Logs
+logs
+*.log
+# OS
+.DS_Store
+# Build
+dist/
+build/
+# Runtime data
+pids
+*.pid
+# Environment
+.env
+# Ignore any node_modules in subfolders
+**/node_modules
