@@ -1,0 +1,7 @@
+import { type ClassValue, clsx } from 'clsx';
+
+export const cn = (...inputs: ClassValue[]) => {
+	return clsx(inputs);
+};
+
+export type WithElementRef<T> = T & { ref?: unknown };
