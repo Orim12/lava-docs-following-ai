@@ -1,0 +1,6 @@
+# Package Managers
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+backend/src/payload-types.ts
+backend/src/(payload)/admin/importMap.js
