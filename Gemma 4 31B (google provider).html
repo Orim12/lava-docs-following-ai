@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+(function(){
+    try {
+        if (localStorage.getItem('lava-docs-dark') === '1') {
+            document.documentElement.classList.add('dark');
+        }
+    } catch(e) {}
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Gemma 4 31B (google provider)</title>
+<style>
+/* ── Sidebar ── */
+.sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 220px; height: 100vh;
+    background: var(--sidebar-bg, #1a1a2e);
+    color: var(--sidebar-fg, #eee);
+    padding: 20px 0;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+    transition: background 0.2s, color 0.2s;
+}
+.sidebar .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--sidebar-border, #333);
+}
+.sidebar .sidebar-header h2 {
+    color: var(--sidebar-fg, #fff);
+    font-size: 1em;
+    margin: 0;
+    font-weight: 700;
+}
+.sidebar .dark-toggle {
+    background: none;
+    border: 1px solid var(--sidebar-border, #444);
+    color: var(--sidebar-fg, #aaa);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 0.8em;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.sidebar .dark-toggle:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+.sidebar a {
+    display: block;
+    color: var(--sidebar-link, #aaa);
+    text-decoration: none;
+    padding: 6px 20px;
+    font-size: 0.88em;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+}
+.sidebar a:hover {
+    color: var(--sidebar-fg, #fff);
+    background: rgba(255,255,255,0.05);
+    border-left-color: #0066cc;
+}
+.sidebar a.active {
+    color: var(--sidebar-fg, #fff);
+    background: rgba(0,102,204,0.15);
+    border-left-color: #0066cc;
+    font-weight: 600;
+}
+.sidebar a.indent {
+    padding-left: 32px;
+    font-size: 0.82em;
+}
+.sidebar .divider {
+    height: 1px;
+    background: var(--sidebar-border, #333);
+    margin: 8px 20px;
+}
+
+/* ── Main content ── */
+.main-content {
+    margin-left: 220px;
+    max-width: 900px;
+    padding: 20px;
+}
+
+/* ── Dark mode variables ── */
+:root {
+    --bg: #ffffff;
+    --fg: #333333;
+    --h1: #1a1a1a;
+    --h2: #2a2a2a;
+    --h3: #3a3a3a;
+    --code-bg: #f4f4f4;
+    --pre-bg: #f4f4f4;
+    --link: #0066cc;
+    --border: #eee;
+    --sidebar-bg: #1a1a2e;
+    --sidebar-fg: #eee;
+    --sidebar-link: #aaa;
+    --sidebar-border: #333;
+}
+html.dark, body.dark {
+    --bg: #1a1a1a;
+    --fg: #d0d0d0;
+    --h1: #f0f0f0;
+    --h2: #e0e0e0;
+    --h3: #c0c0c0;
+    --code-bg: #2a2a2a;
+    --pre-bg: #2a2a2a;
+    --link: #5b9bd5;
+    --border: #333;
+    --sidebar-bg: #0d0d1a;
+    --sidebar-fg: #e0e0e0;
+    --sidebar-link: #999;
+    --sidebar-border: #222;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    line-height: 1.6;
+    color: var(--fg);
+    background: var(--bg);
+    transition: background 0.2s, color 0.2s;
+}
+h1 { color: var(--h1); border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+h2 { color: var(--h2); }
+h3 { color: var(--h3); }
+code { background: var(--code-bg); padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+pre { background: var(--pre-bg); padding: 15px; border-radius: 5px; overflow-x: auto; }
+pre code { background: none; padding: 0; }
+a { color: var(--link); }
+ul { padding-left: 20px; }
+li { margin-bottom: 5px; }
+
+@media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main-content { margin-left: 0; }
+}
+</style>
+
+<script>
+(function() {
+    var KEY = 'lava-docs-dark';
+    function isDark() { return localStorage.getItem(KEY) === '1'; }
+    function apply(dark) {
+        document.body.classList.toggle('dark', dark);
+        document.documentElement.classList.toggle('dark', dark);
+        var btn = document.getElementById('dark-toggle');
+        if (btn) btn.textContent = dark ? 'Light' : 'Dark';
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sync body class with the class already set on <html> by the head script
+        if (document.documentElement.classList.contains('dark')) {
+            document.body.classList.add('dark');
+        }
+        var btn = document.getElementById('dark-toggle');
+        if (btn) {
+            btn.textContent = isDark() ? 'Light' : 'Dark';
+            btn.addEventListener('click', function() {
+                var dark = !isDark();
+                localStorage.setItem(KEY, dark ? '1' : '0');
+                apply(dark);
+            });
+        }
+    });
+})();
+</script>
+</head>
+<body>
+<nav class="sidebar">
+<div class="sidebar-header">
+<h2>Lava Docs AI</h2>
+<button class="dark-toggle" id="dark-toggle">Dark</button>
+</div>
+<a href="index.html">Home</a>
+<a href="Prompt.html">Prompt</a>
+<div class="divider"></div>
+<a href="owl-alpha (OpenRouter).html">Owl-alpha</a>
+<a href="owl-alpha SETUP_STEPS.html" class="indent">Setup Steps</a>
+<div class="divider"></div>
+<a href="Nemotron 3 ultra free(OpenCode Zen).html">Nemotron 3</a>
+<a href="Nemotron 3 ultra free  SETUP_STEPS.html" class="indent">Setup Steps</a>
+<div class="divider"></div>
+<a href="Big pickle (OpenCode Zen).html">Big pickle</a>
+<a href="big pickle SETUP_STEPS.html" class="indent">Setup Steps</a>
+<div class="divider"></div>
+<a href="deepSeek V4 Flash Free (OpenCode Zen).html">deepSeek V4</a>
+<a href="deepseek v4 flash free SETUP_STEPS.html" class="indent">Setup Steps</a>
+<div class="divider"></div>
+<a href="Gemma 4 31B (google provider).html" class="active">Gemma 4 31B</a>
+<a href="gemma 4 31B SETUP_STEPS.html" class="indent">Setup Steps</a>
+<div class="divider"></div>
+<a href="gpt-oss-120B (OpenRouter).html">gpt-oss-120B</a>
+<div class="divider"></div>
+<a href="North Mini Code Free (OpenCode Zen).html">North Mini Code</a>
+<a href="north mini code freeSETUP_STEPS.html" class="indent">Setup Steps</a>
+</nav>
+<div class="main-content">
+
+
+
+<h1>Gemma 4 31B (google provider)</h1>
+<p>It get errors almost every time but when opencode retries it will continue until it gets an error and retries again but other than that it looks completely fine</p>
+<p>When it finished it terminated it self</p>
+<p>It fails but it did come far enough to run the program but there are a lot of issues to fix to run it correctly</p>
+</div>
+</body>
+</html>

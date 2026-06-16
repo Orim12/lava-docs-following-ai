@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+(function(){
+    try {
+        if (localStorage.getItem('lava-docs-dark') === '1') {
+            document.documentElement.classList.add('dark');
+        }
+    } catch(e) {}
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Prompt</title>
+<style>
+/* ── Sidebar ── */
+.sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 220px; height: 100vh;
+    background: var(--sidebar-bg, #1a1a2e);
+    color: var(--sidebar-fg, #eee);
+    padding: 20px 0;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+    transition: background 0.2s, color 0.2s;
+}
+.sidebar .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--sidebar-border, #333);
+}
+.sidebar .sidebar-header h2 {
+    color: var(--sidebar-fg, #fff);
+    font-size: 1em;
+    margin: 0;
+    font-weight: 700;
+}
+.sidebar .dark-toggle {
+    background: none;
+    border: 1px solid var(--sidebar-border, #444);
+    color: var(--sidebar-fg, #aaa);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 0.8em;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.sidebar .dark-toggle:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+.sidebar a {
+    display: block;
+    color: var(--sidebar-link, #aaa);
+    text-decoration: none;
+    padding: 6px 20px;
+    font-size: 0.88em;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+}
+.sidebar a:hover {
+    color: var(--sidebar-fg, #fff);
+    background: rgba(255,255,255,0.05);
+    border-left-color: #0066cc;
+}
+.sidebar a.active {
+    color: var(--sidebar-fg, #fff);
+    background: rgba(0,102,204,0.15);
+    border-left-color: #0066cc;
+    font-weight: 600;
+}
+.sidebar a.indent {
+    padding-left: 32px;
+    font-size: 0.82em;
+}
+.sidebar .divider {
+    height: 1px;
+    background: var(--sidebar-border, #333);
+    margin: 8px 20px;
+}
+
+/* ── Main content ── */
+.main-content {
+    margin-left: 220px;
+    max-width: 900px;
+    padding: 20px;
+}
+
+/* ── Dark mode variables ── */
+:root {
+    --bg: #ffffff;
+    --fg: #333333;
+    --h1: #1a1a1a;
+    --h2: #2a2a2a;
+    --h3: #3a3a3a;
+    --code-bg: #f4f4f4;
+    --pre-bg: #f4f4f4;
+    --link: #0066cc;
+    --border: #eee;
+    --sidebar-bg: #1a1a2e;
+    --sidebar-fg: #eee;
+    --sidebar-link: #aaa;
+    --sidebar-border: #333;
+}
+html.dark, body.dark {
+    --bg: #1a1a1a;
+    --fg: #d0d0d0;
+    --h1: #f0f0f0;
+    --h2: #e0e0e0;
+    --h3: #c0c0c0;
+    --code-bg: #2a2a2a;
+    --pre-bg: #2a2a2a;
+    --link: #5b9bd5;
+    --border: #333;
+    --sidebar-bg: #0d0d1a;
+    --sidebar-fg: #e0e0e0;
+    --sidebar-link: #999;
+    --sidebar-border: #222;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    line-height: 1.6;
+    color: var(--fg);
+    background: var(--bg);
+    transition: background 0.2s, color 0.2s;
+}
+h1 { color: var(--h1); border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+h2 { color: var(--h2); }
+h3 { color: var(--h3); }
+code { background: var(--code-bg); padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+pre { background: var(--pre-bg); padding: 15px; border-radius: 5px; overflow-x: auto; }
+pre code { background: none; padding: 0; }
+a { color: var(--link); }
+ul { padding-left: 20px; }
+li { margin-bottom: 5px; }
+
+@media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main-content { margin-left: 0; }
+}
+</style>
+
+<script>
+(function() {
+    var KEY = 'lava-docs-dark';
+    function isDark() { return localStorage.getItem(KEY) === '1'; }
+    function apply(dark) {
+        document.body.classList.toggle('dark', dark);
+        document.documentElement.classList.toggle('dark', dark);
+        var btn = document.getElementById('dark-toggle');
+        if (btn) btn.textContent = dark ? 'Light' : 'Dark';
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sync body class with the class already set on <html> by the head script
+        if (document.documentElement.classList.contains('dark')) {
+            document.body.classList.add('dark');
+        }
+        var btn = document.getElementById('dark-toggle');
+        if (btn) {
+            btn.textContent = isDark() ? 'Light' : 'Dark';
+            btn.addEventListener('click', function() {
+                var dark = !isDark();
+                localStorage.setItem(KEY, dark ? '1' : '0');
+                apply(dark);
+            });
+        }
+    });
+})();
+</script>
+</head>
+<body>
+<nav class="sidebar">
+<div class="sidebar-header">
+<h2>Lava Docs AI</h2>
+<button class="dark-toggle" id="dark-toggle">Dark</button>
+</div>
+<a href="index.html">Home</a>
+<a href="Prompt.html" class="active">Prompt</a>
+<div class="divider"></div>
+<a href="owl-alpha (OpenRouter).html">Owl-alpha</a>
+<a href="owl-alpha SETUP_STEPS.html" class="indent">Setup Steps</a>
+<div class="divider"></div>
+<a href="Nemotron 3 ultra free(OpenCode Zen).html">Nemotron 3</a>
+<a href="Nemotron 3 ultra free  SETUP_STEPS.html" class="indent">Setup Steps</a>
+<div class="divider"></div>
+<a href="Big pickle (OpenCode Zen).html">Big pickle</a>
+<a href="big pickle SETUP_STEPS.html" class="indent">Setup Steps</a>
+<div class="divider"></div>
+<a href="deepSeek V4 Flash Free (OpenCode Zen).html">deepSeek V4</a>
+<a href="deepseek v4 flash free SETUP_STEPS.html" class="indent">Setup Steps</a>
+<div class="divider"></div>
+<a href="Gemma 4 31B (google provider).html">Gemma 4 31B</a>
+<a href="gemma 4 31B SETUP_STEPS.html" class="indent">Setup Steps</a>
+<div class="divider"></div>
+<a href="gpt-oss-120B (OpenRouter).html">gpt-oss-120B</a>
+<div class="divider"></div>
+<a href="North Mini Code Free (OpenCode Zen).html">North Mini Code</a>
+<a href="north mini code freeSETUP_STEPS.html" class="indent">Setup Steps</a>
+</nav>
+<div class="main-content">
+
+
+
+<h1>Prompt</h1>
+<p>Use the documentation in <strong>project-setup/index.mdx</strong> as the authoritative source of truth for building the project.</p>
+<h2><strong>Primary Objective</strong></h2>
+<p>Your task is to fully implement the project described in the documentation, not merely analyze, summarize, plan, or explain it.</p>
+<p>You must:</p>
+<p>Read and follow <strong>project-setup/index.mdx</strong> completely.  </p>
+<p>Recursively follow all links, references, navigation entries, imports, setup guides, prerequisite documents, and related documentation referenced from <strong>index.mdx</strong>.  </p>
+<p>Continue processing documentation until no additional setup-related documentation remains that could affect implementation.  </p>
+<p>Build the actual project exactly as specified by the documentation.</p>
+<h2><strong>Documentation Processing Rules</strong></h2>
+<ul>
+<li>Treat the documentation as a complete specification.  </li>
+<li>Apply instructions in the order intended by the documentation.  </li>
+<li>If a document references another required document, process that document before continuing.  </li>
+<li>If documentation files conflict:  </li>
+<li>Prioritize the most specific instruction.  </li>
+<li>Prioritize newer documentation over older documentation when versioning information is available.  </li>
+<li>Record all conflicts and resolutions in the implementation log.  </li>
+<li>Do not invent requirements, features, dependencies, APIs, files, architecture, workflows, or behavior that are not specified by the documentation unless absolutely necessary to resolve ambiguity.  </li>
+<li>Any implementation decision made to resolve ambiguity must be documented in the implementation log.</li>
+</ul>
+<h2><strong>Implementation Requirements</strong></h2>
+<p>Create all required:</p>
+<ul>
+<li>Directories  </li>
+<li>Source files  </li>
+<li>Configuration files  </li>
+<li>Environment files  </li>
+<li>Scripts  </li>
+<li>Dependencies  </li>
+<li>Infrastructure definitions  </li>
+<li>Build configurations  </li>
+<li>Documentation artifacts  </li>
+<li>Tests (if specified)</li>
+</ul>
+<p>Do not leave placeholders, TODOs, mock implementations, stubs, incomplete integrations, or partially completed features unless the documentation explicitly requires them.</p>
+<p>Avoid duplicating files, dependencies, configurations, or setup steps that already exist unless the documentation explicitly requires modification.</p>
+<h2><strong>Required Implementation Log</strong></h2>
+<p>Create a root-level file named:</p>
+<p><strong>SETUP_STEPS.md</strong></p>
+<p>Update this file continuously throughout the implementation process rather than generating it only at the end.</p>
+<p>The log must include:</p>
+<h3><strong>Documentation Processed</strong></h3>
+<ul>
+<li>Each documentation file reviewed  </li>
+<li>The order in which files were processed</li>
+</ul>
+<h3><strong>Files and Directories</strong></h3>
+<ul>
+<li>Files created  </li>
+<li>Files modified  </li>
+<li>Directories created</li>
+</ul>
+<h3><strong>Commands Executed</strong></h3>
+<ul>
+<li>Installation commands  </li>
+<li>Build commands  </li>
+<li>Test commands  </li>
+<li>Validation commands</li>
+</ul>
+<h3><strong>Dependencies</strong></h3>
+<ul>
+<li>Packages installed  </li>
+<li>Versions selected  </li>
+<li>Reasons for any version deviations from documentation</li>
+</ul>
+<h3><strong>Configuration Changes</strong></h3>
+<ul>
+<li>Environment variables added  </li>
+<li>Configuration files created or modified  </li>
+<li>Infrastructure changes</li>
+</ul>
+<h3><strong>Decisions and Assumptions</strong></h3>
+<ul>
+<li>Ambiguous instructions encountered  </li>
+<li>Assumptions made  </li>
+<li>Alternative approaches considered  </li>
+<li>Conflict resolutions</li>
+</ul>
+<h3><strong>Validation Results</strong></h3>
+<ul>
+<li>Build results  </li>
+<li>Test results  </li>
+<li>Lint results  </li>
+<li>Type-check results  </li>
+<li>Runtime verification results</li>
+</ul>
+<h3><strong>Blockers and Limitations</strong></h3>
+<p>For any requirement that cannot be completed, document:</p>
+<ul>
+<li>The requirement  </li>
+<li>Why it could not be completed  </li>
+<li>Evidence of the blocker  </li>
+<li>What remains to be done  </li>
+<li>Whether the blocker is temporary or permanent</li>
+</ul>
+<h2><strong>Verification Requirements</strong></h2>
+<p>After implementation is complete, perform all validation steps described by the documentation.</p>
+<p>This includes, where applicable:</p>
+<ul>
+<li>Dependency installation  </li>
+<li>Build execution  </li>
+<li>Test execution  </li>
+<li>Linting  </li>
+<li>Type checking  </li>
+<li>Database migrations  </li>
+<li>Asset generation  </li>
+<li>Application startup verification  </li>
+<li>Integration verification</li>
+</ul>
+<p>If any validation step fails:</p>
+<p>Investigate the cause.  </p>
+<p>Fix the issue.  </p>
+<p>Re-run validation.  </p>
+<p>Document the issue and resolution in <strong>SETUP_STEPS.md</strong>.</p>
+<p>Do not consider the task complete while known validation failures remain unresolved unless the documentation explicitly permits them.</p>
+<h2><strong>Continue-Until-Blocked Rule</strong></h2>
+<p>Continue working until all documented requirements have been implemented.</p>
+<p>Do not stop because:</p>
+<ul>
+<li>The task appears large.  </li>
+<li>Multiple files must be created.  </li>
+<li>Additional documentation is discovered.  </li>
+<li>Intermediate milestones are reached.  </li>
+<li>The implementation spans many directories or technologies.</li>
+</ul>
+<p>If progress is blocked by:</p>
+<ul>
+<li>Missing credentials  </li>
+<li>Missing secrets  </li>
+<li>Missing API keys  </li>
+<li>Unavailable services  </li>
+<li>Missing infrastructure  </li>
+<li>External system restrictions  </li>
+<li>Permission limitations</li>
+</ul>
+<p>Then:</p>
+<p>Continue implementing everything else that can be completed.  </p>
+<p>Clearly document the blocker in <strong>SETUP_STEPS.md</strong>.  </p>
+<p>Record exactly what remains blocked.  </p>
+<p>Record what information or resources are required to continue.</p>
+<h2><strong>Repository Verification Requirements</strong></h2>
+<p>Before completion:</p>
+<p>Compare the implemented project against all documented requirements.  </p>
+<p>Verify that each documented requirement maps to:  </p>
+<ul>
+<li>An existing file,  </li>
+<li>An implemented feature,  </li>
+<li>A configuration,  </li>
+<li>A dependency,  </li>
+<li>A test,  </li>
+<li>Or a documented blocker.  </li>
+</ul>
+<p>Verify that no documented requirement remains unaccounted for.</p>
+<h2><strong>Completion Requirements</strong></h2>
+<p>Only stop when the completion checklist below can be satisfied.</p>
+<h2><strong>Completion Checklist</strong></h2>
+<p>Before finishing, verify and document that:</p>
+<ul>
+<li>All documentation referenced from <strong>project-setup/index.mdx</strong> has been processed.  </li>
+<li>All required files have been created.  </li>
+<li>All required directories have been created.  </li>
+<li>All dependencies have been installed and configured.  </li>
+<li>All configuration requirements have been implemented.  </li>
+<li>All documented features have been implemented.  </li>
+<li>All environment variables have been configured.  </li>
+<li>All required tests have been added or implemented.  </li>
+<li>Builds complete successfully.  </li>
+<li>Tests pass successfully.  </li>
+<li>Linting passes successfully.  </li>
+<li>Type checking passes successfully.  </li>
+<li>The application starts successfully (if applicable).  </li>
+<li>Runtime verification has been completed (if applicable).  </li>
+<li>Each documented requirement has been verified against the repository.  </li>
+<li>No documented requirement remains unimplemented unless documented as blocked.  </li>
+<li><strong>SETUP_STEPS.md</strong> contains a complete chronological record of work performed.</li>
+</ul>
+<h2><strong>Final Verification Report</strong></h2>
+<p>Before stopping, create a final section in <strong>SETUP_STEPS.md</strong> named:</p>
+<h3><strong>Implementation Summary</strong></h3>
+<p>Include:</p>
+<ul>
+<li>Total documentation files processed  </li>
+<li>Total files created  </li>
+<li>Total files modified  </li>
+<li>Total directories created  </li>
+<li>Dependencies installed  </li>
+<li>Validation steps executed  </li>
+<li>Validation results  </li>
+<li>Blockers encountered  </li>
+<li>Remaining work (if any)  </li>
+<li>Explicit confirmation of whether all documented requirements were completed</li>
+</ul>
+<h2><strong>Important Constraints</strong></h2>
+<ul>
+<li>Do not only explain what should be done.  </li>
+<li>Do not replace implementation with a plan.  </li>
+<li>Do not skip implementation steps.  </li>
+<li>Do not omit validation steps.  </li>
+<li>Do not leave documented requirements unfinished.  </li>
+<li>Do not stop after creating scaffolding if the documentation requires implementation.  </li>
+<li>Do not claim completion without verification.  </li>
+<li>Do not assume success; validate it.  </li>
+<li>The completed project is the primary deliverable.  </li>
+<li>The implementation log is supplementary and exists for auditing and verification.</li>
+</ul>
+<h2><strong>Expected Deliverables</strong></h2>
+<p>A fully implemented project that follows <strong>project-setup/index.mdx</strong> and all recursively referenced implementation-related documentation.  </p>
+<p>A root-level <strong>SETUP_STEPS.md</strong> file containing a complete chronological implementation and validation log.  </p>
+<p>A project that successfully passes all documented validation requirements and is runnable according to the documentation.  </p>
+<p>A final verification report demonstrating that every documented requirement has been implemented, validated, or explicitly documented as blocked.</p>
+</div>
+</body>
+</html>
